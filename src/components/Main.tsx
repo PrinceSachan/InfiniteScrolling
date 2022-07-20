@@ -1,17 +1,11 @@
 import { useState, useEffect } from 'react'  
-import { useNavigate } from "react-router-dom";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import moment from 'moment';
 
 //mui imports
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Posts from './Posts';
 
 
 const Main = () => {
@@ -22,7 +16,6 @@ const Main = () => {
     const [loading, setLoading] = useState<boolean>(false)
 
     let isPostFound: boolean = false;
-    let navigate = useNavigate()
     
     const apicall = async () => {
         setLoading(true)
@@ -98,35 +91,7 @@ const Main = () => {
                     }).map((item, index) => {
                         isPostFound = true;
                         return (
-                            <Card variant='outlined' key={index} sx={{ alignItems: 'center' }}>
-                                <CardContent key={index}>
-                                    <Typography variant="h6" gutterBottom component="div">
-                                        {item.title}
-                                    </Typography>
-                                    <Typography variant="subtitle1" gutterBottom component="div">
-                                        By: {item.author}
-                                    </Typography>
-                                    <Typography variant="subtitle1" gutterBottom component="div">
-                                        url: {item.url}
-                                    </Typography>
-                                    <Typography variant="subtitle2" display="block" gutterBottom>
-                                        Created at: {moment(item.created_at).format('LLL')}
-                                    </Typography>
-                                    <Typography variant="subtitle2" display="block" gutterBottom>
-                                        Tags: {item._tags[0]}, {item._tags[1]}, {item._tags[2]}
-                                    </Typography>
-                                    <CardActions>
-                                        <Button id="button" variant="outlined" onClick={() => {
-                                            navigate('/jsondetails', { state: item })
-                                        }}>
-                                            Show JSON
-                                        </Button>
-                                        <Button variant="outlined">
-                                            <Link href={item.url} color="inherit" underline="none" target="blank">Full Artical</Link>
-                                        </Button>
-                                    </CardActions>
-                                </CardContent>
-                            </Card>    
+                            <Posts item={item} key={index} />    
                         )
                     })}
                 </Box>

@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Posts from './Posts';
 
-
 const Main = () => {
     const [data, setData] = useState <any[]>([])
     const [count, setCount] = useState<number>(0)
@@ -25,6 +24,7 @@ const Main = () => {
                 if (items.hits.length > 0) {
                     let temp = [...data, ...items.hits]
                     setData(temp)
+                    console.log(temp)
                 } else {
                     setHasMore(false)
                 }
@@ -65,11 +65,6 @@ const Main = () => {
                 next={scrollToEnd}
                 hasMore={hasMore}
                 loader={false}
-                // endMessage={
-                //     <p style={{ textAlign: 'center' }}>
-                //       <b>Yay! You have seen it all</b>
-                //     </p>
-                // }
             >
                 <Box sx={{ 
                     display: 'grid',

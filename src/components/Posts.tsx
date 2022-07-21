@@ -27,7 +27,7 @@ const Posts: React.FC<Postsprops> = (props): JSX.Element => {
 
   return (
     <div>
-      <Card variant='outlined' sx={{ alignItems: 'center' }}>
+      <Card variant='outlined' sx={{ alignItems: 'center', maxWidth: 800 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom component="div">
             {props.item.title}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'  
+import { useState, useEffect } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 //mui imports
@@ -6,45 +6,40 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Posts from './Posts';
+import { getPosts } from '../api/getPosts';
 
 const Main = () => {
-    const [data, setData] = useState <any[]>([])
+    const [data, setData] = useState<any[]>([])
     const [count, setCount] = useState<number>(0)
     const [hasMore, setHasMore] = useState<boolean>(true)
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
     let isPostFound: boolean = false;
-    
+
     const apicall = async () => {
-        setLoading(true)
-        await fetch(`https://hn.algolia.com/api/v1/search_by_date?tags=story&page=${count}`)
-            .then((res) => res.json())
-            .then((items) => {
-                if (items.hits.length > 0) {
-                    let temp = [...data, ...items.hits]
-                    setData(temp)
-                    console.log(temp)
-                } else {
-                    setHasMore(false)
-                }
-            })
-            .finally(() => {
-                setLoading(false)
-            })
-        return data;    
+        setLoading(true);
+
+        const items = await getPosts(count);
+        if (items) {
+            let temp = [...data, ...items]
+            setData(temp)
+        } else {
+            setHasMore(false)
+        }
+        setLoading(false);
     }
 
     useEffect(() => {
-        if(hasMore) apicall();
+        if (hasMore) apicall();
         const interval = setInterval(() => {
-            setCount(prev => prev + 1) 
+            setCount(prev => prev + 1)
         }, 10000);
         return (() => clearInterval(interval))
     }, [count])
 
     const scrollToEnd = () => {
-        setCount(prev => prev + 1) 
+        setCount(prev => prev + 1)
     }
 
     let inputHandler = (event: any) => {
@@ -54,11 +49,11 @@ const Main = () => {
     return (
         <div className='main'>
             <TextField
-              sx={{ margin: 2 }}  
-              id="outlined-basic"
-              label="Enter title or author"
-              variant="outlined"
-              onChange={inputHandler}
+                sx={{ margin: 2 }}
+                id="outlined-basic"
+                label="Enter title or author"
+                variant="outlined"
+                onChange={inputHandler}
             />
             <InfiniteScroll
                 dataLength={data.length}
@@ -66,19 +61,19 @@ const Main = () => {
                 hasMore={hasMore}
                 loader={false}
             >
-                <Box sx={{ 
+                <Box sx={{
                     display: 'grid',
                     gap: 1,
                     maxWidth: 800,
-                    margin: 2, 
+                    margin: 2,
                     mx: 'auto'
-                 }}>
+                }}>
                     {data.filter((post) => {
                         if (searchTerm === '') {
                             return post;
                         }
                         else if (
-                            post.title.toLowerCase().includes(searchTerm.toLowerCase())||
+                            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             post.author.toLowerCase().includes(searchTerm.toLowerCase())
                         ) {
                             return post;
@@ -86,7 +81,7 @@ const Main = () => {
                     }).map((item, index) => {
                         isPostFound = true;
                         return (
-                            <Posts item={item} key={index} />    
+                            <Posts item={item} key={index} data-testid='Posts'/>
                         )
                     })}
                 </Box>
@@ -96,7 +91,7 @@ const Main = () => {
             {loading && searchTerm.trim().length === 0 && <h4>Loading...</h4>}
 
             {/* When user reaches api limit */}
-            {!hasMore && searchTerm.trim().length === 0 && 
+            {!hasMore && searchTerm.trim().length === 0 &&
                 <Typography variant='h4' gutterBottom>
                     <p style={{ textAlign: 'center' }}>
                         <b>Yay! You have seen it all</b>
@@ -109,7 +104,7 @@ const Main = () => {
                 <Typography variant='h5' gutterBottom>Data Not Found</Typography>
             }
         </div>
-  )
+    )
 }
 
 export default Main;
